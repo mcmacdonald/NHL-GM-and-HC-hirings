@@ -71,11 +71,11 @@ nhl <- tidygraph::tbl_graph(
   ) %>%
   tidygraph::activate(nodes) %>%
   dplyr::mutate(
-    odegree = tidygraph::centrality_degree(mode = "out") # out-going arcs
+    degree = tidygraph::centrality_degree(mode = "all")
     )
 
 # plot hiring carousel
-ggraph::ggraph(nhl, layout = "stress") +
+fig01 <- ggraph::ggraph(nhl, layout = "stress") +
   ggraph::geom_edge_fan(
     ggplot2::aes(edge_alpha = 0.4),
     arrow = grid::arrow(length = grid::unit(2.5, 'mm'), type = 'closed'),
@@ -95,7 +95,7 @@ ggraph::ggraph(nhl, layout = "stress") +
   ggraph::geom_node_point(
     ggplot2::aes(
       color = Job,
-      size = odegree
+      size = degree
       ),
     fill = "white",
     shape = 21,
@@ -109,7 +109,7 @@ ggraph::ggraph(nhl, layout = "stress") +
     # max.overlaps = 20
     # ) +
   ggraph::geom_node_text(
-    ggplot2::aes(label = ifelse(odegree >= 3, name, "")), 
+    ggplot2::aes(label = ifelse(degree >= 3, name, "")), 
     repel = TRUE, 
     size = 3.2, 
     fontface = "bold",
@@ -124,9 +124,12 @@ ggraph::ggraph(nhl, layout = "stress") +
   ggraph::scale_edge_alpha_continuous(guide = "none") +
   ggraph::theme_graph() +
   ggplot2::labs(
-    title = "NHL General Manager's and Head Coaches, Post-2005 Lockout Era",
-    caption = "Figure notes: The thickness of the arrows illustrate the number of seasons GMs and HCs worked together. The direction of arrows indicate seniority on the job. Names show prominent GMs and Coaches across the 2005-06/2025-26 seasons."
+    title = "NHL General Manager's and Head Coaches, Post-2004/05 Lockout Era",
+    caption = "Figure notes: The thickness of the arrows illustrate the number of seasons GMs and HCs worked together. The direction of arrows indicate seniority on the job. Names show GMs and HCs who have worked at least 3 seasons in the league since the 2005-06. The size of each node indicates the number of seasons they have worked since the 2004-05 NHL lockout."
     )
+
+# output graph
+# ggplot2::ggsave("fig01.png", fig01, path = "~/Desktop", height = 10, width = 20, dpi = 500)
 
 
 
